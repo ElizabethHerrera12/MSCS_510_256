@@ -20,8 +20,10 @@
  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package charlie.card;
+package charlie.shoe;
 
+
+import charlie.card.Card;
 
 /**
  * Shoe for testing dealer blackjack.
@@ -32,9 +34,10 @@ public class Shoe02 extends Shoe {
     public void init() {
         cards.clear();
         cards.add(new Card(7, Card.Suit.DIAMONDS));
+        cards.add(new Card(9, Card.Suit.CLUBS));
+        cards.add(new Card(Card.JACK, Card.Suit.SPADES));
         cards.add(new Card(Card.ACE, Card.Suit.SPADES));
         cards.add(new Card(6, Card.Suit.HEARTS));
-        cards.add(new Card(Card.JACK, Card.Suit.SPADES));
         cards.add(new Card(4, Card.Suit.CLUBS));
         cards.add(new Card(8, Card.Suit.CLUBS));
         cards.add(new Card(Card.JACK, Card.Suit.CLUBS)); 

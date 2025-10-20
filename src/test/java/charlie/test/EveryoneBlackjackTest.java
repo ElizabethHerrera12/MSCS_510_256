@@ -32,16 +32,20 @@ import java.util.Properties;
  */
 public class EveryoneBlackjackTest extends AbstractTestCase implements IUi {
     Hid you;
-    boolean gameOver = false;
+    final Boolean gameOver = false;
+    Courier courier = null;
     boolean bj = false;
 
     /**
      * Runs the test.
      */
     public void test() throws Exception {
-        // Load charlie.props into the system properties.
+        // Start the server
+        go();
+
+        // Authentication looks for these properties
         Properties props = System.getProperties();
-        props.load(new FileInputStream("EveryoneBlackjack.props"));
+        props.load(new FileInputStream("charlie.props"));
 
         // Connect to game server securely.
         ClientAuthenticator authenticator = new ClientAuthenticator();
@@ -51,7 +55,7 @@ public class EveryoneBlackjackTest extends AbstractTestCase implements IUi {
 
         // Start the courier which sends messages to & receive messages from the serve
         // except only after we've arrived.
-        Courier courier = new Courier(this);
+        courier = new Courier(this);
 
         courier.start();
         info("courier started");
@@ -181,7 +185,6 @@ public class EveryoneBlackjackTest extends AbstractTestCase implements IUi {
      */
     @Override
     public void starting(List<Hid> hids, int shoeSize) {
-        gameOver = false;
         StringBuilder buffer = new StringBuilder();
 
         buffer.append("game STARTING: ");
@@ -201,7 +204,6 @@ public class EveryoneBlackjackTest extends AbstractTestCase implements IUi {
      */
     @Override
     public void ending(int shoeSize) {
-        gameOver = true;
         synchronized(this) {
             this.notifyAll();
         }

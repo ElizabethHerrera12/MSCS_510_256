@@ -707,7 +707,7 @@ public class GameFrame extends AbstractGameFrame {
      * @param evt Button press event.
      */    
     private void adviseCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adviseCheckBoxActionPerformed
-        // TODO add your handling code here:
+        // TODO request your handling code here:
     }//GEN-LAST:event_adviseCheckBoxActionPerformed
     /**
      * Handles case where player presses split button

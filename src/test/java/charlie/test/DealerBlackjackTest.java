@@ -32,13 +32,17 @@ import java.util.Properties;
  */
 public class DealerBlackjackTest extends AbstractTestCase implements IUi {
     Hid you;
-    boolean gameOver = false;
+    final Boolean gameOver = false;
+    Courier courier = null;
     boolean bj = false;
 
     /**
      * Runs the test.
      */
     public void test() throws Exception {
+        // Start the server
+        go();
+
         // Load charlie.props into the system properties.
         Properties props = System.getProperties();
         props.load(new FileInputStream("DealerBlackjack.props"));
@@ -190,7 +194,6 @@ public class DealerBlackjackTest extends AbstractTestCase implements IUi {
      */
     @Override
     public void starting(List<Hid> hids, int shoeSize) {
-        gameOver = false;
         StringBuilder buffer = new StringBuilder();
 
         buffer.append("game STARTING: ");
@@ -210,7 +213,6 @@ public class DealerBlackjackTest extends AbstractTestCase implements IUi {
      */
     @Override
     public void ending(int shoeSize) {
-        gameOver = true;
         synchronized(this) {
             this.notifyAll();
         }

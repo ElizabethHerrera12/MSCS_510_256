@@ -29,7 +29,7 @@ import charlie.actor.RealPlayer;
 import charlie.card.Card;
 import charlie.card.HoleCard;
 import charlie.card.Hid;
-import charlie.card.ShoeFactory;
+import charlie.shoe.ShoeFactory;
 import charlie.util.Constant;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -37,6 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
+
+import charlie.util.Play;
 import org.apache.log4j.Logger;
 
 /**
@@ -84,7 +86,7 @@ public class Dealer implements Serializable {
         // Instantiate the shoe
         Properties props = System.getProperties();
         
-        String scenario = props.getProperty(Constant.PLUGIN_SHOE, "charlie.card.Shoe");
+        String scenario = props.getProperty(Constant.PLUGIN_SHOE, "charlie.shoe.Shoe");
         LOG.info("using scenario = '"+scenario+"'");
         
         shoe = ShoeFactory.getInstance(scenario);
@@ -352,6 +354,7 @@ public class Dealer implements Serializable {
                 Hand hand = this.hands.get(hid);
                 
                 hand.hit(card);
+                hid.request(Play.HIT);
                                                 
                 Thread.sleep(Constant.DEAL_DELAY);
                 
@@ -362,9 +365,9 @@ public class Dealer implements Serializable {
                 
                 // If player has blackjack -- they win automatically!
                 if (hand.isBlackjack()) {
-                    hid.multiplyAmt(BLACKJACK_PAYS);
+//                    hid.multiplyAmt(BLACKJACK_PAYS);
 
-                    updateBankroll(hid,PROFIT);
+                    updateBankroll(hid,BLACKJACK_PAYS);
 
                     for (IPlayer player_ : playerSequence) {
                         player_.blackjack(hid);
@@ -394,6 +397,8 @@ public class Dealer implements Serializable {
         Card card = deal();
         hand.hit(card);
 
+        hid.request(Play.HIT);
+
         LOG.info("hit hid = " + hid + " with " + card);
 
         // All players MUST test for charlie. Otherwise they will
@@ -416,9 +421,10 @@ public class Dealer implements Serializable {
         }
         // If hand got a Charlie or Blackjack, we're done with this hand
         else if(hand.isCharlie()) {
-            hid.multiplyAmt(CHARLIE_PAYS);
+//            hid.multiplyAmt(CHARLIE_PAYS);
+            hid.request(Play.STAY);
             
-            updateBankroll(hid,PROFIT);
+            updateBankroll(hid,CHARLIE_PAYS);
             
             // Tell everyone what happened
             for (IPlayer _player : playerSequence)
@@ -427,8 +433,9 @@ public class Dealer implements Serializable {
             goNextHand();
         }
         else if(hand.isBlackjack()) {
-            hid.multiplyAmt(BLACKJACK_PAYS);
-                        updateBankroll(hid,PROFIT);
+            hid.request(Play.STAY);
+
+            updateBankroll(hid,BLACKJACK_PAYS);
             
             // Tell everyone what happened
             for (IPlayer _player : playerSequence)
@@ -456,6 +463,8 @@ public class Dealer implements Serializable {
         }
         
         LOG.info("got STAY for "+hid);
+
+        hid.request(Play.STAY);
         
         // Since player stayed, we're done with hand
         LOG.info("going to next hand");
@@ -483,6 +492,8 @@ public class Dealer implements Serializable {
 
         // Dealer must double bet since one in hid is a copy -- not dealers
         hand.dubble();
+
+        hid.request(Play.DOUBLE_DOWN);
        
         Card card = deal();
         LOG.info("got double down amt = "+hid.getAmt()+" hid = "+hid+" card = "+card);
@@ -530,11 +541,14 @@ public class Dealer implements Serializable {
         // Same seat, same bet amount, but no sidebet as player
         // does side bet and did or did not already.
         Hid newHid = new Hid(hid.getSeat(), hid.getAmt(), 0);
-        
+
         // Want to let the HID's know they have been split aready
-        // to enforce 'rules' about splitting splits later
+        // to enforce 'rules' about splitting splits later.
         newHid.setSplit(true);
         hid.setSplit(true);
+
+        hid.request(Play.SPLIT);
+        newHid.request(Play.SPLIT);
         
         // Let us split the original hand.
         Hand newHand = origHand.split(newHid);
@@ -550,7 +564,7 @@ public class Dealer implements Serializable {
         players.put(newHand.getHid(), player);
         
         // Now that we have two hands we need to manipulate the handSeqIndex
-        // Think it will be easier to add it AFTER the current hand since that
+        // Think it will be easier to request it AFTER the current hand since that
         // hand is actually "in play" ... 
         int i = handSequence.indexOf(hid);
         handSequence.add((i+1),newHand.getHid());
@@ -594,7 +608,7 @@ public class Dealer implements Serializable {
             // Is this hand created from a "split" AND about to be new turn?
             // If so, we need to "HIT" the hand with its first card.
             if(hid.isSplit() && hand.size() == 1){
-                // Need to add a delay or it comes out too fast.
+                // Need to request a delay or it comes out too fast.
                 try{
                     Thread.sleep(DEAL_DELAY);
                     
@@ -752,8 +766,12 @@ public class Dealer implements Serializable {
      */
     protected void updateBankroll(Hid hid,double gain) {
         applySideBet(hid);
+
+        // Update the P&L.
+        double pl = hid.getAmt() * gain;
+        hid.setAmt(pl);
         
-        house.updateBankroll(players.get(hid), hid, gain);      
+        house.updateBankroll(players.get(hid), hid);
     }
     
     /**

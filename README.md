@@ -73,9 +73,9 @@ A shoe contains instances of Card objects from which Dealer deals to players. A 
 
 There is a property, _charlie.shoe_ in charlie.props. The value must be a fully qualified instance of IShoe. Here's an example:
 
-charlie.shoe charlie.card.Shoe01
+charlie.shoe charlie.shoe.Shoe01
 
-The key is "charlie.shoe" and the value is "charlie.card.Shoe01". It turns out the Shoe01 is a one-deck shoe which I've found helpful for testing.
+The key is "charlie.shoe" and the value is "charlie.shoe.Shoe01". It turns out the Shoe01 is a one-deck shoe which I've found helpful for testing.
 
 When House constructs Dealer, Dealer looks for the shoe property and tries to construct a the IShoe. The shoe designer's job is to create the shoe by implementing IShoe methods. As safe and simple approach is to extend Shoe which implements IShoe. You then just need to add cards to cards which is a List.
 

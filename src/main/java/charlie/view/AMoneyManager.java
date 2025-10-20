@@ -235,10 +235,10 @@ public class AMoneyManager {
             chip.setX(xPoint);
             chip.setY(yPoint);
                 
-            // add chip to the "split chips" stack
+            // request chip to the "split chips" stack
             this.splitChips.add(chip);
             
-            // add the wager to the table.
+            // request the wager to the table.
             this.wager.increase(chip.getAmt());
         }
     }
@@ -251,31 +251,35 @@ public class AMoneyManager {
         this.wager.setAmt(this.wager.getAmt()-value);
         this.splitChips.clear();
     }
-    
-    
+
     /**
-     * Increases bankroll from a win.
+     * Updates the bankroll.
      * @param amt Amount
      */
-    public void increase(Double amt) {
-        bankroll.increase(amt);
-    }
+    public void update(Double amt) { bankroll.update(amt); }
+//    /**
+//     * Increases bankroll from a win.
+//     * @param amt Amount
+//     */
+//    public void increase(Double amt) {
+//        bankroll.increase(amt);
+//    }
     
-    /**
-     * Increases bankroll with a chip earning.
-     * @param chip Chip
-     */
-    public void increase(Chip chip) {
-        wager.increase(chip.getAmt());
-    }
+//    /**
+//     * Increases bankroll with a chip earning.
+//     * @param chip Chip
+//     */
+//    public void increase(Chip chip) {
+//        wager.increase(chip.getAmt());
+//    }
     
-    /**
-     * Decreases bankroll from a loss.
-     * @param amt Amount
-     */
-    public void decrease(Double amt) {
-        bankroll.decrease(amt);
-    }    
+//    /**
+//     * Decreases bankroll from a loss.
+//     * @param amt Amount
+//     */
+//    public void decrease(Double amt) {
+//        bankroll.decrease(amt);
+//    }
 
     /**
      * Gets the bankroll.
@@ -334,7 +338,7 @@ public class AMoneyManager {
 //                
 //                Chip chip = new Chip(button.getImage(),placeX,placeY,amounts[i]);
 //                
-//                chips.add(chip);
+//                chips.request(chip);
 //                
 //                wager.increase(amounts[i]);
 //                

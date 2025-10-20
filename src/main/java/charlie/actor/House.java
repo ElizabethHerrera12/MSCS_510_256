@@ -192,16 +192,15 @@ public class House extends Actor implements Listener {
     /**
      * Updates the bankroll.
      * @param hid Hand
-     * @param gain PL
      * @param player the player
      */
-    public void updateBankroll(IPlayer player,Hid hid,Double gain) {      
+    public void updateBankroll(IPlayer player,Hid hid) {
         if(player == null || !accounts.containsKey(player))
             return;
         
         Ticket ticket = accounts.get(player);
         
-        Double bankroll = ticket.getBankroll() + gain * hid.getAmt() + hid.getSideAmt();
+        Double bankroll = ticket.getBankroll() + hid.getAmt() + hid.getSideAmt();
         
         ticket.setBankroll(bankroll);
     }

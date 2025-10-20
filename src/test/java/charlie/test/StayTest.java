@@ -20,6 +20,7 @@ import charlie.card.Hid;
 import charlie.dealer.Seat;
 import charlie.plugin.IUi;
 import charlie.server.Ticket;
+
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.Properties;
@@ -31,14 +32,17 @@ import java.util.Properties;
  */
 public class StayTest extends AbstractTestCase implements IUi {
     Hid you;
-    boolean gameOver = false;
-    boolean bj = false;
+    final Boolean gameOver = false;
+    Courier courier = null;
 
     /**
      * Runs the test.
      */
     public void test() throws Exception {
-        // Load charlie.props into the system properties.
+        // Start the server
+        go();
+
+        // Authentication looks for these properties
         Properties props = System.getProperties();
         props.load(new FileInputStream("charlie.props"));
 
@@ -50,7 +54,7 @@ public class StayTest extends AbstractTestCase implements IUi {
 
         // Start the courier which sends messages to & receive messages from the serve
         // except only after we've arrived.
-        Courier courier = new Courier(this);
+        courier = new Courier(this);
 
         courier.start();
         info("courier started");
@@ -78,30 +82,11 @@ public class StayTest extends AbstractTestCase implements IUi {
 
         info("bet amt: "+BET_AMT+", side bet: "+SIDE_BET_AMT);
 
-        // Wait for YOU turn -- this works for heads up game, maybe not otherwise.
-        synchronized (this) {
-            info("waiting YOU turn...");
-            this.wait();
-        }
-
-        // It's YOU turn provided neither YOU or DEALER have a Blackjack.
-        info("game over: "+gameOver);
-        if(!gameOver) {
-            courier.stay(you);
-            info("sent STAY");
-
-            // Wait for server to process STAY => wait for DEALER turn
-            synchronized (this) {
-                info("waiting DEALER turn...");
-                this.wait();
-            }
-        }
-
         // Wait for dealer to call end of game.
         // If we don't do this, game server shows connection refused exception.
-        synchronized (this) {
+        synchronized (gameOver) {
             info("waiting ENDING...");
-            this.wait();
+            gameOver.wait();
         }
 
         info("DONE !");
@@ -124,11 +109,8 @@ public class StayTest extends AbstractTestCase implements IUi {
      */
     @Override
     public void turn(Hid hid) {
-        synchronized(this) {
-            info("turn changed to: "+hid);
-            // If no thread is WAIT-ing, notifies are not buffered!
-            this.notifyAll();
-        }
+        if(hid.getSeat() == Seat.YOU)
+            new Thread(() -> courier.stay(you)).start();
     }
 
     /**
@@ -174,7 +156,6 @@ public class StayTest extends AbstractTestCase implements IUi {
     @Override
     public void blackjack(Hid hid) {
         info("BLACKJACK: "+hid);
-        bj = true;
     }
 
     /**
@@ -194,7 +175,6 @@ public class StayTest extends AbstractTestCase implements IUi {
      */
     @Override
     public void starting(List<Hid> hids, int shoeSize) {
-        gameOver = false;
         StringBuilder buffer = new StringBuilder();
 
         buffer.append("game STARTING: ");
@@ -214,9 +194,8 @@ public class StayTest extends AbstractTestCase implements IUi {
      */
     @Override
     public void ending(int shoeSize) {
-        gameOver = true;
-        synchronized(this) {
-            this.notifyAll();
+        synchronized(gameOver) {
+            gameOver.notify();
         }
 
        info("ENDING game shoe size: "+shoeSize);

@@ -47,22 +47,30 @@ public class ABankroll {
         this.y = y;
         this.amount = amt;
     }
-    
+
     /**
-     * Increases the bankroll.
-     * @param amt Amount of increase
+     * Updates the bankroll.
+     * @param amt Amount
      */
-    public void increase(Double amt) {
+    public void update(Double amt) {
         this.amount += amt;
     }
-    
-    /**
-     * Decreases the bankroll
-     * @param amt Amount of decrease
-     */
-    public void decrease(Double amt) {
-        this.amount -= amt;
-    }    
+
+//    /**
+//     * Increases the bankroll.
+//     * @param amt Amount of increase
+//     */
+//    public void increase(Double amt) {
+//        this.amount += amt;
+//    }
+//
+//    /**
+//     * Decreases the bankroll
+//     * @param amt Amount of decrease
+//     */
+//    public void decrease(Double amt) {
+//        this.amount -= amt;
+//    }
 
     /**
      * Gets the bankroll.

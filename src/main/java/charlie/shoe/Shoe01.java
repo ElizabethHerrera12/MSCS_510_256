@@ -20,28 +20,24 @@
  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package charlie.card;
+package charlie.shoe;
+
+import java.util.Random;
 
 
 /**
- * Shoe for testing dealer blackjack.
+ * This class implements a test scenario.
  * @author Ron Coleman
  */
-public class Shoe02 extends Shoe {
+public class Shoe01 extends Shoe {  
     @Override
     public void init() {
-        cards.clear();
-        cards.add(new Card(7, Card.Suit.DIAMONDS));
-        cards.add(new Card(Card.ACE, Card.Suit.SPADES));
-        cards.add(new Card(6, Card.Suit.HEARTS));
-        cards.add(new Card(Card.JACK, Card.Suit.SPADES));
-        cards.add(new Card(4, Card.Suit.CLUBS));
-        cards.add(new Card(8, Card.Suit.CLUBS));
-        cards.add(new Card(Card.JACK, Card.Suit.CLUBS)); 
-    }    
-    
-    @Override
-    public boolean shuffleNeeded() {
-        return false;
+        super.ran = new Random(/*1*/);
+                        
+        super.numDecks = 1;
+        
+        super.load();
+        
+        super.shuffle();
     }
 }

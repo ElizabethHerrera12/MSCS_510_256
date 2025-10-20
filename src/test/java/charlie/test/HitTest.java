@@ -20,21 +20,20 @@ import charlie.card.Hid;
 import charlie.dealer.Seat;
 import charlie.plugin.IUi;
 import charlie.server.Ticket;
+
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.Properties;
 
 
 /**
- * This class is a  demo of a simple but plausible unit test case of
- * User Blackjack logic.
- * @author Elizabeth Herrera
+ * This class is a  demo of a simple but plausible unit test case of HIT logic.
+ * @author Ron.Coleman
  */
-public class UserBlackjackTest extends AbstractTestCase implements IUi {
+public class HitTest extends AbstractTestCase implements IUi {
     Hid you;
     final Boolean gameOver = false;
     Courier courier = null;
-    boolean bj = false;
 
     /**
      * Runs the test.
@@ -43,13 +42,12 @@ public class UserBlackjackTest extends AbstractTestCase implements IUi {
         // Start the server
         go();
 
-        // Load
-        // charlie.props into the system properties.
+        // Authentication looks for these properties
         Properties props = System.getProperties();
-        props.load(new FileInputStream("UserBlackjack.props"));
+        props.load(new FileInputStream("charlie.props"));
 
         // Connect to game server securely.
-                ClientAuthenticator authenticator = new ClientAuthenticator();
+        ClientAuthenticator authenticator = new ClientAuthenticator();
 
         Ticket ticket = authenticator.send("tester","123");
         info("connecting to server");
@@ -84,28 +82,14 @@ public class UserBlackjackTest extends AbstractTestCase implements IUi {
 
         info("bet amt: "+BET_AMT+", side bet: "+SIDE_BET_AMT);
 
-        // Wait for YOU turn -- this works for heads up game, maybe not otherwise.
-        synchronized (this) {
-            info("waiting YOU turn...");
-            this.wait();
-        }
-
-        // At this point, the props file should have forced a Blackjack for YOU.
-        info("checking if blackjack was detected...");
-        if (bj) {
-            info("SUCCESS: Blackjack was triggered for YOU!");
-        } else {
-            info("FAILURE: Blackjack was not detected!");
-        }
-
-        // End game cleanly.
-        synchronized (this) {
+        // Wait for dealer to call end of game.
+        // If we don't do this, game server shows connection refused exception.
+        synchronized (gameOver) {
             info("waiting ENDING...");
-            this.wait();
+            gameOver.wait();
         }
-        info("DONE!");
-        info("User has blackjack!");
-        info("Test SUCCESSFUL");
+
+        info("DONE !");
     }
 
     /**
@@ -125,11 +109,8 @@ public class UserBlackjackTest extends AbstractTestCase implements IUi {
      */
     @Override
     public void turn(Hid hid) {
-        synchronized(this) {
-            info("turn changed to: "+hid);
-            // If no thread is WAIT-ing, notifies are not buffered!
-            this.notifyAll();
-        }
+        if(hid.getSeat() == Seat.YOU)
+            new Thread(() -> courier.hit(you)).start();
     }
 
     /**
@@ -175,7 +156,6 @@ public class UserBlackjackTest extends AbstractTestCase implements IUi {
     @Override
     public void blackjack(Hid hid) {
         info("BLACKJACK: "+hid);
-        bj = true;
     }
 
     /**
@@ -214,8 +194,8 @@ public class UserBlackjackTest extends AbstractTestCase implements IUi {
      */
     @Override
     public void ending(int shoeSize) {
-        synchronized(this) {
-            this.notifyAll();
+        synchronized(gameOver) {
+            gameOver.notify();
         }
 
         info("ENDING game shoe size: "+shoeSize);

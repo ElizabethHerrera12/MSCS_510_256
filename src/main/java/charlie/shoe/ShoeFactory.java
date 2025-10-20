@@ -20,28 +20,35 @@
  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package charlie.card;
+package charlie.shoe;
 
+import charlie.plugin.IShoe;
+import org.apache.log4j.Logger;
 
 /**
- * Shoe for testing dealer blackjack.
+ * This class implements the shoe factory.
  * @author Ron Coleman
  */
-public class Shoe02 extends Shoe {
-    @Override
-    public void init() {
-        cards.clear();
-        cards.add(new Card(7, Card.Suit.DIAMONDS));
-        cards.add(new Card(Card.ACE, Card.Suit.SPADES));
-        cards.add(new Card(6, Card.Suit.HEARTS));
-        cards.add(new Card(Card.JACK, Card.Suit.SPADES));
-        cards.add(new Card(4, Card.Suit.CLUBS));
-        cards.add(new Card(8, Card.Suit.CLUBS));
-        cards.add(new Card(Card.JACK, Card.Suit.CLUBS)); 
-    }    
-    
-    @Override
-    public boolean shuffleNeeded() {
-        return false;
+public class ShoeFactory {     
+    private static final Logger LOG = Logger.getLogger(ShoeFactory.class);
+    /**
+     * Gets an instance of a shoe based on a scenario.
+     * @param scenario Scenario
+     * @return Shoe
+     */
+    public static IShoe getInstance(String scenario) {
+        Class<?> clazz;
+        try {
+            clazz = Class.forName(scenario);
+            
+            IShoe shoe = (IShoe) clazz.newInstance();
+            
+            return shoe;
+        }
+        catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+            LOG.error("failed to instantiate shoe '"+scenario+"': " + ex);
+        }
+        
+        return null;
     }
 }

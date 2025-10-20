@@ -27,7 +27,11 @@ import charlie.util.Constant;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+
+import charlie.util.Play;
 import org.apache.log4j.Logger;
 
 /**
@@ -45,6 +49,7 @@ public class Hid implements Serializable {
     private Seat seat = Seat.YOU;
     protected double amt = 0.0;
     protected double sideAmt = 0.0;
+    protected List<Play> requests = new ArrayList<>();
     
     /**
      * Set if this hand was created due to a split
@@ -80,7 +85,11 @@ public class Hid implements Serializable {
         this.seat = hid.seat;
         this.amt = hid.amt;
         this.sideAmt = hid.sideAmt;
+        for(Play play: hid.requests) {
+            this.request(play);
+        }
     }
+
     /**
      * Constructor
      * @param seat Hand id for this seat
@@ -102,6 +111,21 @@ public class Hid implements Serializable {
     }
 
     /**
+     * Adds a play to the hand history.
+     * @param play Play
+     */
+    public void request(Play play) {
+        requests.add(play);
+    }
+
+    /**
+     * Gets plays from the hand history/
+     * @return List
+     */
+    public List<Play> getRequests() {
+        return requests;
+    }
+    /**
      * Gets the amount for this hand.
      * @return Amount
      */
@@ -116,20 +140,12 @@ public class Hid implements Serializable {
     public void setAmt(double amt) {
         this.amt = amt;
     }
-    
-    /**
-     * Multiplies bet by some factor.
-     * @param factor the multiplier
-     */
-    public void multiplyAmt(double factor) {
-        this.amt *= factor;
-    }
-    
+
     /**
      * Doubles the bet amount.
      */
     public void dubble() {
-        multiplyAmt(2.0);
+        this.amt *= 2;
     }
 
     /**

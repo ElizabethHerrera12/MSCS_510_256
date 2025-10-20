@@ -84,10 +84,10 @@ public class DealerBlackjackTest extends AbstractTestCase implements IUi {
         info("bet amt: "+BET_AMT+", side bet: "+SIDE_BET_AMT);
 
         // Wait for YOU turn -- this works for heads up game, maybe not otherwise.
-        synchronized (this) {
-            info("waiting YOU turn...");
-            this.wait();
-        }
+        //synchronized (this) {
+        //    info("waiting YOU turn...");
+        //    this.wait();
+        //}
 
         // At this point, the props file should have forced a Blackjack for YOU.
         info("checking if blackjack was detected...");
@@ -124,11 +124,14 @@ public class DealerBlackjackTest extends AbstractTestCase implements IUi {
      */
     @Override
     public void turn(Hid hid) {
-        synchronized(this) {
-            info("turn changed to: "+hid);
-            // If no thread is WAIT-ing, notifies are not buffered!
-            this.notifyAll();
-        }
+        // If it is not your turn, return
+        if (hid.getSeat() != Seat.YOU)
+            return;
+
+        // Sends stay message to server side
+        new Thread(() -> {
+            courier.stay(hid);
+        }).start();
     }
 
     /**

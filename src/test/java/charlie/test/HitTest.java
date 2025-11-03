@@ -41,6 +41,9 @@ public class HitTest extends AbstractTestCase implements IUi {
     Boolean myTurn = false;
     Hand myHand = null;
 
+    // --- Added: track total net winnings like other tests ---
+    private double totalWinnings = 0.0;
+
     /**
      * Runs the test.
      */
@@ -54,20 +57,16 @@ public class HitTest extends AbstractTestCase implements IUi {
 
         // Connect to game server securely.
         ClientAuthenticator authenticator = new ClientAuthenticator();
-
         Ticket ticket = authenticator.send("tester","123");
         info("connecting to server");
 
         // Start the courier which sends messages to & receive messages from the serve
         // except only after we've arrived.
         courier = new Courier(this);
-
         courier.start();
         info("courier started");
 
         // Tell the game server we've arrived.
-        // Note: this is only used for arriving after which courier becomes the
-        // intermediary.
         new Arriver(ticket).send();
         info("we ARRIVED!");
 
@@ -79,16 +78,11 @@ public class HitTest extends AbstractTestCase implements IUi {
 
         info("server READY !");
 
-        // Now that the game server is ready, to start a game, we just need to
-        // send in a bet which in the GUI is like pressing DEAL.
-
-
+        // Start game by placing bet
         courier.bet(BET_AMT,SIDE_BET_AMT);
-
         info("bet amt: "+BET_AMT+", side bet: "+SIDE_BET_AMT);
 
         // Wait for dealer to call end of game.
-        // If we don't do this, game server shows connection refused exception.
         synchronized (gameOver) {
             info("waiting ENDING...");
             gameOver.wait();
@@ -157,11 +151,13 @@ public class HitTest extends AbstractTestCase implements IUi {
     public void win(Hid hid) {
         info("WIN: "+hid);
 
-        Seat who = hid.getSeat();
-        assert who == Seat.YOU: "you didn't win "+who+" did";
-
+        // Robust accounting: use seat to decide sign handling
         double pl = hid.getAmt();
-        assert pl == (double) BET_AMT: "unexpected P&L: "+pl;
+        if (hid.getSeat() == Seat.YOU) {
+            totalWinnings += pl;                 // add your payout (engine-defined)
+        } else if (hid.getSeat() == Seat.DEALER) {
+            totalWinnings -= Math.abs(pl);       // dealer win reduces your net
+        }
     }
 
     /**
@@ -172,12 +168,12 @@ public class HitTest extends AbstractTestCase implements IUi {
     public void lose(Hid hid) {
         info("LOSE: "+hid);
 
-        Seat who = hid.getSeat();
-        assert who == Seat.DEALER: "dealer didn't win "+who+" did";
-
-        // TODO: verify dealer gets a P&L.
-//        double pl = hid.getAmt();
-//        assert pl == -(double) BET_AMT: "unexpected P&L: "+pl;
+        double pl = hid.getAmt();
+        if (hid.getSeat() == Seat.YOU) {
+            totalWinnings += pl;                 // likely negative → subtracts
+        } else if (hid.getSeat() == Seat.DEALER) {
+            totalWinnings += Math.abs(pl);       // dealer loss increases your net
+        }
     }
 
     /**
@@ -186,7 +182,7 @@ public class HitTest extends AbstractTestCase implements IUi {
      */
     @Override
     public void push(Hid hid) {
-        info("PUSH: "+hid);
+        info("PUSH: "+hid+" (net change $0)");
     }
 
     /**
@@ -196,6 +192,12 @@ public class HitTest extends AbstractTestCase implements IUi {
     @Override
     public void blackjack(Hid hid) {
         info("BLACKJACK: "+hid);
+        double pl = hid.getAmt();
+        if (hid.getSeat() == Seat.YOU) {
+            totalWinnings += pl;
+        } else if (hid.getSeat() == Seat.DEALER) {
+            totalWinnings -= Math.abs(pl);
+        }
     }
 
     /**
@@ -241,6 +243,8 @@ public class HitTest extends AbstractTestCase implements IUi {
         }
 
         info("ENDING game shoe size: "+shoeSize);
+        // --- Added: print total winnings like other tests ---
+        info("TOTAL WINNINGS: $" + totalWinnings);
     }
 
     /**

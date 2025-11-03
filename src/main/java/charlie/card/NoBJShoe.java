@@ -31,7 +31,12 @@ public class NoBJShoe extends Shoe {
     @Override
     public void init() {
         cards.clear();
-        cards.add(new Card(4, Card.Suit.CLUBS));
+        cards.add(new Card(9, Card.Suit.CLUBS));
+        cards.add(new Card(7, Card.Suit.CLUBS));
+        cards.add(new Card(6, Card.Suit.CLUBS));
+        cards.add(new Card(Card.JACK, Card.Suit.CLUBS));
+        cards.add(new Card(5, Card.Suit.CLUBS));
+        cards.add(new Card(9, Card.Suit.CLUBS));
         cards.add(new Card(4, Card.Suit.CLUBS));
         cards.add(new Card(Card.JACK, Card.Suit.CLUBS));
         cards.add(new Card(Card.JACK, Card.Suit.CLUBS));

@@ -39,7 +39,7 @@ public class DoubleDTest extends AbstractTestCase implements IUi {
     Boolean myTurn = false;
     Hand myHand = null;
 
-    // --- Added: track total winnings ---
+    // track total winnings
     private double totalWinnings = 0.0;
 
     /**
@@ -140,7 +140,7 @@ public class DoubleDTest extends AbstractTestCase implements IUi {
         assert pl == (double) BET_AMT || pl == (double) (BET_AMT * 2)
                 : "unexpected P&L: " + pl;
 
-        // --- Added: update total winnings ---
+        // update total winnings
         totalWinnings += pl;
     }
 
@@ -158,7 +158,7 @@ public class DoubleDTest extends AbstractTestCase implements IUi {
         assert pl == (double) BET_AMT || pl == (double) (BET_AMT * 2)
                 : "unexpected P&L: " + pl;
 
-        // --- Added: subtract loss from total winnings ---
+        // subtract loss from total winnings
         totalWinnings -= pl;
     }
 

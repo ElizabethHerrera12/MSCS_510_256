@@ -32,7 +32,7 @@ import java.util.Properties;
  * @author Elizabeth Herrera
  */
 public class DoubleDTest extends AbstractTestCase implements IUi {
-    final int BET_AMT = 5;
+    final int BET_AMT = 2000;
     final int SIDE_BET_AMT = 0;
     Hid you;
     final Boolean gameOver = false;
@@ -162,6 +162,8 @@ public class DoubleDTest extends AbstractTestCase implements IUi {
         info("LOSE: "+hid);
         Seat who = hid.getSeat();
         assert who == Seat.DEALER: "dealer didn't win "+who+" did";
+        double pl = hid.getAmt();
+        assert pl == (double) BET_AMT: "unexpected P&L: "+pl;
     }
 
     /**

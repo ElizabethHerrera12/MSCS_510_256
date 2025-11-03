@@ -36,7 +36,7 @@ public class DoubleD extends Shoe {
         cards.add(new Card(9, Card.Suit.CLUBS));
         cards.add(new Card(5, Card.Suit.CLUBS));
         cards.add(new Card(4, Card.Suit.CLUBS));
-        cards.add(new Card(4, Card.Suit.CLUBS));
+        cards.add(new Card(3, Card.Suit.CLUBS));
         cards.add(new Card(4, Card.Suit.CLUBS));
         cards.add(new Card(4, Card.Suit.CLUBS));
         cards.add(new Card(4, Card.Suit.CLUBS));

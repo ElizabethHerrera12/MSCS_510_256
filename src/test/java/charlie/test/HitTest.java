@@ -16,6 +16,7 @@ import charlie.actor.Arriver;
 import charlie.actor.ClientAuthenticator;
 import charlie.actor.Courier;
 import charlie.card.Card;
+import charlie.card.Hand;
 import charlie.card.Hid;
 import charlie.dealer.Seat;
 import charlie.plugin.IUi;
@@ -25,15 +26,20 @@ import java.io.FileInputStream;
 import java.util.List;
 import java.util.Properties;
 
-
 /**
  * This class is a  demo of a simple but plausible unit test case of HIT logic.
+ * It assumes a heads-up game: 6+9+5S vs. 7+10 where "S" is a spades.
  * @author Ron.Coleman
  */
 public class HitTest extends AbstractTestCase implements IUi {
+    final int BET_AMT = 5;
+    final int SIDE_BET_AMT = 0;
+
     Hid you;
     final Boolean gameOver = false;
     Courier courier = null;
+    Boolean myTurn = false;
+    Hand myHand = null;
 
     /**
      * Runs the test.
@@ -75,8 +81,7 @@ public class HitTest extends AbstractTestCase implements IUi {
 
         // Now that the game server is ready, to start a game, we just need to
         // send in a bet which in the GUI is like pressing DEAL.
-        final int BET_AMT = 5;
-        final int SIDE_BET_AMT = 0;
+
 
         courier.bet(BET_AMT,SIDE_BET_AMT);
 
@@ -101,6 +106,24 @@ public class HitTest extends AbstractTestCase implements IUi {
     @Override
     public void deal(Hid hid, Card card, int[] handValues) {
         info("DEAL: "+hid+" card: "+card+" hand values: "+handValues[0]+", "+handValues[1]);
+
+        if(hid.getSeat() == Seat.YOU) {
+            assert myHand != null: "bad hand";
+
+            // Dealer hits the hand on the server side -- we must do it on client.
+            myHand.hit(card);
+
+            // It will be YOU turn only if server says so via turn method.
+            if(myTurn) {
+                assert myHand.size() == 3;
+
+                // Card assumed from shoe in this order
+                assert card.getRank() == 5 && card.getSuit() == Card.Suit.SPADES;
+
+                // Let server know we're done.
+                new Thread(() -> courier.stay(you)).start();
+            }
+        }
     }
 
     /**
@@ -109,8 +132,12 @@ public class HitTest extends AbstractTestCase implements IUi {
      */
     @Override
     public void turn(Hid hid) {
-        if(hid.getSeat() == Seat.YOU)
+        if(hid.getSeat() == Seat.YOU) {
+            myTurn = true;
             new Thread(() -> courier.hit(you)).start();
+        }
+        else
+            myTurn = false;
     }
 
     /**
@@ -129,6 +156,12 @@ public class HitTest extends AbstractTestCase implements IUi {
     @Override
     public void win(Hid hid) {
         info("WIN: "+hid);
+
+        Seat who = hid.getSeat();
+        assert who == Seat.YOU: "you didn't win "+who+" did";
+
+        double pl = hid.getAmt();
+        assert pl == (double) BET_AMT: "unexpected P&L: "+pl;
     }
 
     /**
@@ -138,6 +171,13 @@ public class HitTest extends AbstractTestCase implements IUi {
     @Override
     public void lose(Hid hid) {
         info("LOSE: "+hid);
+
+        Seat who = hid.getSeat();
+        assert who == Seat.DEALER: "dealer didn't win "+who+" did";
+
+        // TODO: verify dealer gets a P&L.
+//        double pl = hid.getAmt();
+//        assert pl == -(double) BET_AMT: "unexpected P&L: "+pl;
     }
 
     /**
@@ -181,8 +221,10 @@ public class HitTest extends AbstractTestCase implements IUi {
 
         for(Hid hid: hids) {
             buffer.append(hid).append(", ");
-            if(hid.getSeat() == Seat.YOU)
+            if(hid.getSeat() == Seat.YOU) {
                 this.you = hid;
+                myHand = new Hand(you);
+            }
         }
         buffer.append(" shoe size: ").append(shoeSize);
         info(buffer.toString());

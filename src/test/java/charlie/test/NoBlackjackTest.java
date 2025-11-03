@@ -84,10 +84,10 @@ public class NoBlackjackTest extends AbstractTestCase implements IUi {
         info("bet amt: "+BET_AMT+", side bet: "+SIDE_BET_AMT);
 
         // Wait for YOU turn -- this works for heads up game, maybe not otherwise.
-        synchronized (this) {
-            info("waiting YOU turn...");
-            this.wait();
-        }
+        //synchronized (this) {
+        //    info("waiting YOU turn...");
+        //    this.wait();
+        //}
 
         // It's YOU turn provided neither YOU or DEALER have a Blackjack.
         info("game over: "+gameOver);
@@ -96,10 +96,10 @@ public class NoBlackjackTest extends AbstractTestCase implements IUi {
             info("sent STAY");
 
             // Wait for server to process STAY => wait for DEALER turn
-            synchronized (this) {
-                info("waiting DEALER turn...");
-                this.wait();
-            }
+            //synchronized (this) {
+            //    info("waiting DEALER turn...");
+            //    this.wait();
+            //}
         }
         else {
             assert bj: "YOU nor DEALER have Blackjack";
@@ -133,11 +133,14 @@ public class NoBlackjackTest extends AbstractTestCase implements IUi {
      */
     @Override
     public void turn(Hid hid) {
-        synchronized(this) {
-            info("turn changed to: "+hid);
-            // If no thread is WAIT-ing, notifies are not buffered!
-            this.notifyAll();
-        }
+        // If it is not your turn, return
+        if (hid.getSeat() != Seat.YOU)
+            return;
+
+        // Sends stay message to server side
+        new Thread(() -> {
+            courier.stay(hid);
+        }).start();
     }
 
     /**

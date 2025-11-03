@@ -50,7 +50,7 @@ public class HitTest extends AbstractTestCase implements IUi {
 
         // Authentication looks for these properties
         Properties props = System.getProperties();
-        props.load(new FileInputStream("charlie.props"));
+        props.load(new FileInputStream("Hit.props"));
 
         // Connect to game server securely.
         ClientAuthenticator authenticator = new ClientAuthenticator();

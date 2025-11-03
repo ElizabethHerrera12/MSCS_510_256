@@ -24,22 +24,17 @@ package charlie.card;
 
 
 /**
- * Shoe for testing user blackjack.
+ * Shoe for testing both the user and dealing getting blackjack.
  * @author Elizabeth Herrera
  */
-public class Shoe03 extends Shoe {
+public class EveryoneBJShoe extends Shoe {
     @Override
     public void init() {
         cards.clear();
-        cards.add(new Card(Card.ACE, Card.Suit.SPADES));
-        cards.add(new Card(7, Card.Suit.DIAMONDS));
         cards.add(new Card(Card.JACK, Card.Suit.SPADES));
-        cards.add(new Card(7, Card.Suit.DIAMONDS));
-        cards.add(new Card(9, Card.Suit.CLUBS));
-        cards.add(new Card(6, Card.Suit.HEARTS));
-        cards.add(new Card(4, Card.Suit.CLUBS));
-        cards.add(new Card(8, Card.Suit.CLUBS));
-        cards.add(new Card(Card.JACK, Card.Suit.CLUBS));
+        cards.add(new Card(Card.JACK, Card.Suit.SPADES));
+        cards.add(new Card(Card.ACE, Card.Suit.SPADES));
+        cards.add(new Card(Card.ACE, Card.Suit.SPADES));
     }
 
     @Override

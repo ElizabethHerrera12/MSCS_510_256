@@ -27,7 +27,7 @@ package charlie.card;
  * Shoe for testing dealer blackjack.
  * @author Ron Coleman
  */
-public class Shoe02 extends Shoe {
+public class DealerBJShoe extends Shoe {
     @Override
     public void init() {
         cards.clear();

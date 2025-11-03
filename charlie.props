@@ -4,4 +4,4 @@ charlie.server.realplayer 127.0.0.1:8501
 charlie.client.courier -1:8001
 #charlie.sounds off
 charlie.debug false
-charlie.shoe charlie.shoe.Shoe01
+charlie.shoe charlie.card.RandomShoe

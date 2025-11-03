@@ -22,25 +22,22 @@
  */
 package charlie.card;
 
+import java.util.Random;
+
 
 /**
- * Shoe for testing neither the user nor dealer getting blackjack.
- * @author Elizabeth Herrera
+ * This class implements a test scenario.
+ * @author Ron Coleman
  */
-public class Shoe04 extends Shoe {
+public class RandomShoe extends Shoe {
     @Override
     public void init() {
-        cards.clear();
-        cards.add(new Card(4, Card.Suit.CLUBS));
-        cards.add(new Card(4, Card.Suit.CLUBS));
-        cards.add(new Card(Card.JACK, Card.Suit.CLUBS));
-        cards.add(new Card(Card.JACK, Card.Suit.CLUBS));
-        cards.add(new Card(4, Card.Suit.CLUBS));
-        cards.add(new Card(4, Card.Suit.CLUBS));
-    }
-
-    @Override
-    public boolean shuffleNeeded() {
-        return false;
+        super.ran = new Random(/*1*/);
+                        
+        super.numDecks = 1;
+        
+        super.load();
+        
+        super.shuffle();
     }
 }

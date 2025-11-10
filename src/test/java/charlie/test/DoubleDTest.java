@@ -1,15 +1,3 @@
-/*
- * Copyright (c) Ron Coleman
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
 package charlie.test;
 
 import charlie.actor.Arriver;
@@ -124,6 +112,7 @@ public class DoubleDTest extends AbstractTestCase implements IUi {
     @Override
     public void bust(Hid hid) {
         info("BREAK: " + hid);
+        assert false;
     }
 
     /**
@@ -137,7 +126,7 @@ public class DoubleDTest extends AbstractTestCase implements IUi {
         double pl = hid.getAmt();
 
         // Accept normal win or double-down win
-        assert pl == (double) BET_AMT || pl == (double) (BET_AMT * 2)
+        assert pl == (double) (BET_AMT * 2)
                 : "unexpected P&L: " + pl;
 
         // update total winnings
@@ -155,7 +144,7 @@ public class DoubleDTest extends AbstractTestCase implements IUi {
         double pl = hid.getAmt();
 
         // Accept normal or double-down loss
-        assert pl == (double) BET_AMT || pl == (double) (BET_AMT * 2)
+        assert pl == (double) (BET_AMT * 2)
                 : "unexpected P&L: " + pl;
 
         // subtract loss from total winnings
@@ -168,6 +157,7 @@ public class DoubleDTest extends AbstractTestCase implements IUi {
     @Override
     public void push(Hid hid) {
         info("PUSH: " + hid + " (net change $0)");
+        assert false;
     }
 
     /**
@@ -176,6 +166,7 @@ public class DoubleDTest extends AbstractTestCase implements IUi {
     @Override
     public void blackjack(Hid hid) {
         info("BLACKJACK: " + hid);
+        assert false;
     }
 
     /**
@@ -224,6 +215,7 @@ public class DoubleDTest extends AbstractTestCase implements IUi {
     @Override
     public void shuffling() {
         info("SHUFFLING");
+        assert false;
     }
 
     @Override

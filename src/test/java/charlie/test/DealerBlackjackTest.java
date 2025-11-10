@@ -112,6 +112,7 @@ public class DealerBlackjackTest extends AbstractTestCase implements IUi {
     @Override
     public void bust(Hid hid) {
         info("BREAK: " + hid);
+        assert false;
     }
 
     @Override
@@ -126,6 +127,7 @@ public class DealerBlackjackTest extends AbstractTestCase implements IUi {
             // Dealer win means your net goes down by their gain
             totalWinnings -= Math.abs(pl);
         }
+        assert false;
     }
 
     @Override
@@ -145,6 +147,7 @@ public class DealerBlackjackTest extends AbstractTestCase implements IUi {
     @Override
     public void push(Hid hid) {
         info("PUSH: " + hid + " (net change $0)");
+        assert false;
     }
 
     @Override

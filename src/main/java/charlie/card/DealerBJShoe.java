@@ -25,7 +25,7 @@ package charlie.card;
 
 /**
  * Shoe for testing dealer blackjack.
- * @author Ron Coleman
+ * @author Elizabeth Herrera
  */
 public class DealerBJShoe extends Shoe {
     @Override

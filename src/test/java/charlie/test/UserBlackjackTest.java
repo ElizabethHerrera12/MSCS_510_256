@@ -125,6 +125,7 @@ public class UserBlackjackTest extends AbstractTestCase implements IUi {
     @Override
     public void bust(Hid hid) {
         info("BREAK: "+hid);
+        assert false;
     }
 
     /**
@@ -151,6 +152,7 @@ public class UserBlackjackTest extends AbstractTestCase implements IUi {
             double pl = hid.getAmt();
             totalWinnings -= pl;
         }
+        assert false;
     }
 
     /**
@@ -159,7 +161,7 @@ public class UserBlackjackTest extends AbstractTestCase implements IUi {
     @Override
     public void push(Hid hid) {
         info("PUSH: "+hid+" (net change $0)");
-        // no change to totalWinnings
+        assert false;
     }
 
     /**

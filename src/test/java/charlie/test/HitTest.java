@@ -29,7 +29,7 @@ import java.util.Properties;
 /**
  * This class is a  demo of a simple but plausible unit test case of HIT logic.
  * It assumes a heads-up game: 6+9+5S vs. 7+10 where "S" is a spades.
- * @author Ron.Coleman
+ * @author Elizabeth Herrera
  */
 public class HitTest extends AbstractTestCase implements IUi {
     final int BET_AMT = 5;
@@ -40,8 +40,6 @@ public class HitTest extends AbstractTestCase implements IUi {
     Courier courier = null;
     Boolean myTurn = false;
     Hand myHand = null;
-
-    // --- Added: track total net winnings like other tests ---
     private double totalWinnings = 0.0;
 
     /**
@@ -141,6 +139,7 @@ public class HitTest extends AbstractTestCase implements IUi {
     @Override
     public void bust(Hid hid) {
         info("BREAK: "+hid);
+        assert false;
     }
 
     /**
@@ -183,6 +182,7 @@ public class HitTest extends AbstractTestCase implements IUi {
     @Override
     public void push(Hid hid) {
         info("PUSH: "+hid+" (net change $0)");
+        assert false;
     }
 
     /**
@@ -198,6 +198,7 @@ public class HitTest extends AbstractTestCase implements IUi {
         } else if (hid.getSeat() == Seat.DEALER) {
             totalWinnings -= Math.abs(pl);
         }
+        assert false;
     }
 
     /**
@@ -243,7 +244,6 @@ public class HitTest extends AbstractTestCase implements IUi {
         }
 
         info("ENDING game shoe size: "+shoeSize);
-        // --- Added: print total winnings like other tests ---
         info("TOTAL WINNINGS: $" + totalWinnings);
     }
 

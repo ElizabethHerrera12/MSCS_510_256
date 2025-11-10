@@ -52,7 +52,7 @@ public class EveryoneBlackjackTest extends AbstractTestCase implements IUi {
 
         // Authentication looks for these properties
         Properties props = System.getProperties();
-        props.load(new FileInputStream("charlie.props"));
+        props.load(new FileInputStream("EveryoneBlackjack.props"));
 
         // Connect to game server securely.
         ClientAuthenticator authenticator = new ClientAuthenticator();
@@ -86,7 +86,6 @@ public class EveryoneBlackjackTest extends AbstractTestCase implements IUi {
         }
         info("DONE!");
         info("YOU and the DEALER have blackjack!");
-        info("Test SUCCESSFUL");
     }
 
     /**
@@ -116,6 +115,7 @@ public class EveryoneBlackjackTest extends AbstractTestCase implements IUi {
     @Override
     public void bust(Hid hid) {
         info("BREAK: " + hid);
+        assert false;
     }
 
     /**

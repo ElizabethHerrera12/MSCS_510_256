@@ -124,6 +124,7 @@ public class NoBlackjackTest extends AbstractTestCase implements IUi {
     @Override
     public void bust(Hid hid) {
         info("BREAK: " + hid);
+        assert false;
     }
 
     /**
@@ -160,7 +161,7 @@ public class NoBlackjackTest extends AbstractTestCase implements IUi {
     @Override
     public void push(Hid hid) {
         info("PUSH: " + hid + " (net change $0)");
-        // no change
+        assert false;
     }
 
     /**
@@ -176,6 +177,7 @@ public class NoBlackjackTest extends AbstractTestCase implements IUi {
         } else if (hid.getSeat() == Seat.DEALER) {
             totalWinnings -= Math.abs(pl);
         }
+        assert false;
     }
 
     /**

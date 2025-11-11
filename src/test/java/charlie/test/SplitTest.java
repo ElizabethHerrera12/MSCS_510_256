@@ -108,10 +108,10 @@ public class SplitTest extends AbstractTestCase implements IUi {
 
         // Validate the cards received
         if (hid.equals(split1) && mySplitHand1.size() == 2) {
-            assert card.getRank() == 4 && card.getSuit() == Card.Suit.CLUBS :
+            assert card.getRank() == 10 && card.getSuit() == Card.Suit.SPADES :
                     "Expected C4 for first split hand, got " + card;
         } else if (hid.equals(split2) && mySplitHand2.size() == 2) {
-            assert card.getRank() == 3 && card.getSuit() == Card.Suit.CLUBS :
+            assert card.getRank() == 9 && card.getSuit() == Card.Suit.DIAMONDS :
                     "Expected C3 for second split hand, got " + card;
         }
     }
@@ -137,11 +137,7 @@ public class SplitTest extends AbstractTestCase implements IUi {
             info("Splitting pair of 9s...");
             new Thread(() -> courier.split(you)).start();
         }
-        // If this is a split hand
-        else if (hid.equals(split1)) {
-            info("Staying on first split hand...");
-            new Thread(() -> courier.stay(split1)).start();
-        }
+        // Issue a stay for the second split hid
         else if (hid.equals(split2)) {
             info("Staying on second split hand...");
             new Thread(() -> courier.stay(split2)).start();
@@ -276,5 +272,8 @@ public class SplitTest extends AbstractTestCase implements IUi {
 
         info("Assigned Split 1 " + split1);
         info("Assigned Split 2 " + split2);
+
+        // Issue a stay on the first split
+        new Thread(() -> courier.stay(split1)).start();
     }
 }

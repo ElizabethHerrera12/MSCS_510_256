@@ -118,15 +118,12 @@ public class DealerBlackjackTest extends AbstractTestCase implements IUi {
     @Override
     public void win(Hid hid) {
         info("WIN: " + hid);
+        Seat who = hid.getSeat();
         double pl = hid.getAmt();
-
-        if (hid.getSeat() == Seat.YOU) {
-            // If YOU won, add directly (pl may be positive or negative)
-            totalWinnings += pl;
-        } else if (hid.getSeat() == Seat.DEALER) {
-            // Dealer win means your net goes down by their gain
-            totalWinnings -= Math.abs(pl);
-        }
+        // Accepts normal win
+        assert pl == BET_AMT : "unexpected P&L: " + pl;
+        // update total winnings
+        totalWinnings += pl;
         assert false;
     }
 

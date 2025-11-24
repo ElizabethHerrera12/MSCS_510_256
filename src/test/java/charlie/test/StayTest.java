@@ -118,13 +118,12 @@ public class StayTest extends AbstractTestCase implements IUi {
     @Override
     public void win(Hid hid) {
         info("WIN: " + hid);
+        Seat who = hid.getSeat();
         double pl = hid.getAmt();
-
-        if (hid.getSeat() == Seat.YOU) {
-            totalWinnings += pl;            // your win increases net
-        } else if (hid.getSeat() == Seat.DEALER) {
-            totalWinnings -= Math.abs(pl);  // dealer win decreases your net
-        }
+        // Accepts normal win
+        assert pl == BET_AMT : "unexpected P&L: " + pl;
+        // update total winnings
+        totalWinnings += pl;
     }
 
     /**
@@ -136,9 +135,9 @@ public class StayTest extends AbstractTestCase implements IUi {
         double pl = hid.getAmt();
 
         if (hid.getSeat() == Seat.YOU) {
-            totalWinnings += pl;            // likely negative; adds as a subtraction
+            totalWinnings += pl;
         } else if (hid.getSeat() == Seat.DEALER) {
-            totalWinnings += Math.abs(pl);  // dealer loss increases your net
+            totalWinnings += Math.abs(pl);
         }
     }
 

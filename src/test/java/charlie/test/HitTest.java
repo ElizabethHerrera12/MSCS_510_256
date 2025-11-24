@@ -148,15 +148,11 @@ public class HitTest extends AbstractTestCase implements IUi {
      */
     @Override
     public void win(Hid hid) {
-        info("WIN: "+hid);
-
-        // Robust accounting: use seat to decide sign handling
+        info("WIN: " + hid);
+        Seat who = hid.getSeat();
         double pl = hid.getAmt();
-        if (hid.getSeat() == Seat.YOU) {
-            totalWinnings += pl;                 // add your payout (engine-defined)
-        } else if (hid.getSeat() == Seat.DEALER) {
-            totalWinnings -= Math.abs(pl);       // dealer win reduces your net
-        }
+        // update total winnings
+        totalWinnings += pl;
     }
 
     /**
@@ -169,9 +165,9 @@ public class HitTest extends AbstractTestCase implements IUi {
 
         double pl = hid.getAmt();
         if (hid.getSeat() == Seat.YOU) {
-            totalWinnings += pl;                 // likely negative → subtracts
+            totalWinnings += pl;
         } else if (hid.getSeat() == Seat.DEALER) {
-            totalWinnings += Math.abs(pl);       // dealer loss increases your net
+            totalWinnings += Math.abs(pl);
         }
     }
 

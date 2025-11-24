@@ -133,14 +133,14 @@ public class UserBlackjackTest extends AbstractTestCase implements IUi {
      */
     @Override
     public void win(Hid hid) {
-        info("WIN: "+hid);
-        // Update total like the DoubleD test: add your payout if YOU won
-        if (hid.getSeat() == Seat.YOU) {
-            double pl = hid.getAmt();   // includes BJ 3:2 etc.
-            totalWinnings += pl;
-        }
+        info("WIN: " + hid);
+        Seat who = hid.getSeat();
+        double pl = hid.getAmt();
+        // Accepts normal win
+        assert pl == BET_AMT : "unexpected P&L: " + pl;
+        // update total winnings
+        totalWinnings += pl;
     }
-
     /**
      * Invoked for a losing hand.
      */

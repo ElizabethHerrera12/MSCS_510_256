@@ -92,27 +92,48 @@ public class SplitTest extends AbstractTestCase implements IUi {
     public void deal(Hid hid, Card card, int[] handValues) {
         info("DEAL: " + hid + " card: " + card + " hand values: " + handValues[0] + ", " + handValues[1]);
 
-        // Assign cards to correct hands
+        // Assign the dealt card to the correct player's hand
+        //
+        // The server identifies hands using Hid values. We track three:
+        //   - you        : original hand before the split
+        //   - split1     : first hand created after splitting the pair
+        //   - split2     : second hand created after splitting the pair
+        //
+        // Makes sure it is the player's turn
         if (hid.getSeat() == Seat.YOU) {
+
+            // Original hand (before split)
             if (hid.equals(you)) {
                 assert myHand != null : "bad hand";
                 myHand.hit(card);
-            } else if (hid.equals(split1)) {
+            }
+
+            // First split hand
+            else if (hid.equals(split1)) {
                 assert mySplitHand1 != null : "bad split 1 hand";
                 mySplitHand1.hit(card);
-            } else if (hid.equals(split2)) {
+            }
+
+            // Second split hand
+            else if (hid.equals(split2)) {
                 assert mySplitHand2 != null : "bad split 2 hand";
                 mySplitHand2.hit(card);
             }
         }
 
-        // Validate the cards received
+        // Validate that after the split, the SECOND card dealt to each
+        // split hand matches the expected scripted test sequence:
+
+        // split1 second card -> 10 of Spades
         if (hid.equals(split1) && mySplitHand1.size() == 2) {
             assert card.getRank() == 10 && card.getSuit() == Card.Suit.SPADES :
-                    "Expected C4 for first split hand, got " + card;
-        } else if (hid.equals(split2) && mySplitHand2.size() == 2) {
+                    "Expected S10 for first split hand, got " + card;
+        }
+
+        // split2 second card -> 9 of Diamonds
+        else if (hid.equals(split2) && mySplitHand2.size() == 2) {
             assert card.getRank() == 9 && card.getSuit() == Card.Suit.DIAMONDS :
-                    "Expected C3 for second split hand, got " + card;
+                    "Expected D9 for second split hand, got " + card;
         }
     }
 
@@ -134,6 +155,7 @@ public class SplitTest extends AbstractTestCase implements IUi {
             assert myHand.getCard(0).getRank() == 9;
             assert myHand.getCard(1).getRank() == 9;
 
+            // Split the 9s
             info("Splitting pair of 9s...");
             new Thread(() -> courier.split(you)).start();
         }
@@ -158,6 +180,8 @@ public class SplitTest extends AbstractTestCase implements IUi {
      */
     @Override
     public void win(Hid hid) {
+
+        // For this test case, assure that you win
         info("WIN: " + hid);
         Seat who = hid.getSeat();
         assert who == Seat.YOU : "you didn't win " + who + " did";
@@ -175,9 +199,11 @@ public class SplitTest extends AbstractTestCase implements IUi {
      */
     @Override
     public void lose(Hid hid) {
+
+        // For this test case, assure that the dealer loses
         info("LOSE: " + hid);
         Seat who = hid.getSeat();
-        assert who == Seat.DEALER : "dealer didn't win " + who + " did";
+        assert who == Seat.DEALER : "dealer didn't lose " + who + " did";
         double pl = hid.getAmt();
 
         // Accept normal or double-down loss
@@ -264,9 +290,11 @@ public class SplitTest extends AbstractTestCase implements IUi {
     public void split(Hid newHid, Hid origHid) {
         info("SPLIT: new Hand " + newHid + " from " + origHid);
 
+        // Set new HIDs for the split hand
         split1 = origHid;
         split2 = newHid;
 
+        // Create new Hands for the split using the HIDs
         mySplitHand1 = new Hand(split1);
         mySplitHand2 = new Hand(split2);
 
